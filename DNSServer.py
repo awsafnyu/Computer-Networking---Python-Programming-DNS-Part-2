@@ -43,7 +43,7 @@ def decrypt_with_aes(encrypted_data, password, salt):
     decrypted_data = f.decrypt(encrypted_data) #call the Fernet decrypt method
     return decrypted_data.decode('utf-8')
 
-salt = bytes('Tandon', 'utf-8') # Remember it should be a byte-object
+salt = 'Tandon'.encode('utf-8') # Remember it should be a byte-object
 password = 'aar651@nyu.edu'
 input_string = 'AlwaysWatching'
 
@@ -93,14 +93,14 @@ dns_records = {
         dns.rdatatype.MX: [(10, 'mxa-00256a01.gslb.pphosted.com.')],  # List of (preference, mail server) tuples
         dns.rdatatype.AAAA: '2001:0db8:85a3:0000:0000:8a2e:0373:7312',
         dns.rdatatype.NS: 'ns1.nyu.edu.',
-        dns.rdatatype.TXT: input_string,
+        dns.rdatatype.TXT: (encrypted_value.decode('utf-8'),),
     }
 }
 
 def run_dns_server():
     # Create a UDP socket and bind it to the local IP address (what unique IP address is used here, similar to webserver lab) and port (the standard port for DNS)
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) # Research this
-    server_socket.bind(('127.0.0.1', 53))
+    server_socket.bind(('127.0.0.1', 8053))
 
     while True:
         try:
@@ -120,7 +120,6 @@ def run_dns_server():
             if qname in dns_records and qtype in dns_records[qname]:
                 # Retrieve the data for the record and create an appropriate `rdata` object for it
                 answer_data = dns_records[qname][qtype]
-                print(answer_data)
 
                 rdata_list = []
 
